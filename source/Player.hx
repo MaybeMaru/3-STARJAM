@@ -8,6 +8,9 @@ import flixel.group.FlxSpriteGroup;
 //The milkman's milk is delicious
 class Player extends FlxSpriteGroup
 {
+    //Gameplay
+    public var canMove:Bool = true;
+    
     //Hitboxes
     public var playerHitbox:FlxSprite;
     public var attackHitbox:FlxSprite;
@@ -23,6 +26,7 @@ class Player extends FlxSpriteGroup
     // Controls shit
     var left:Bool;
     var right:Bool;
+    public var resetP:Bool;
     public var jump:Bool;
     public var attack:Bool;
 
@@ -34,15 +38,19 @@ class Player extends FlxSpriteGroup
         playerHitbox.alpha = 0;
         add(playerHitbox);
 
-        attackHitbox = new FlxSprite(0,0).makeGraphic(25, 75, FlxColor.RED);
+        attackHitbox = new FlxSprite(0,0).makeGraphic(125, 75, FlxColor.RED);
         attackHitbox.alpha = 0;
 		add(attackHitbox);
 
-        playerSprite = new FlxSprite(0,0).loadGraphic(Paths.sprite('coffeeKnight'), true, 75, 65);
+        playerSprite = new FlxSprite(0,0).loadGraphic(Paths.sprite('coffeeKnightFINAL'), true, 154, 112);
+        playerSprite.scale.set(0.5,0.5);
+        playerSprite.updateHitbox();
         playerSprite.animation.add('idle', [0,1,2,3,4], 12);
-        playerSprite.animation.add('fall', [5,6], 12);
-        playerSprite.animation.add('jump', [7,8], 24, false);
-        playerSprite.animation.add('attack', [9,10,11], 12, false);
+        playerSprite.animation.add('attack', [5,6], 12, false);
+        playerSprite.animation.add('jump', [7,8], 12, false);
+        playerSprite.animation.add('victory', [9,10,11,12], 12);
+        playerSprite.animation.add('walk', [13,14,15,16], 12);
+        playerSprite.animation.add('fall', [17,18], 12);
 
         playerSprite.scale.set(1.5,1.5);
         add(playerSprite);
@@ -57,12 +65,26 @@ class Player extends FlxSpriteGroup
     }
 
     override function update(elapsed:Float)
-    {
-        left = FlxG.keys.anyPressed(['LEFT', 'A']);
-        right = FlxG.keys.anyPressed(['RIGHT', 'D']);
-        jump = FlxG.keys.anyJustPressed(['SPACE', 'Z']);
-        attack = FlxG.keys.anyJustPressed(['X']);
+    {        
+        if(canMove)
+        {
+            left = FlxG.keys.anyPressed(['LEFT', 'A']);
+            right = FlxG.keys.anyPressed(['RIGHT', 'D']);
+            jump = FlxG.keys.anyJustPressed(['SPACE', 'Z']);
+            attack = FlxG.keys.anyJustPressed(['X']);
+            resetP = FlxG.keys.anyJustPressed(['R']);
+        }
+        else
+        {
+            left = false;
+            right = false;
+            jump = false;
+            attack = false;
+            resetP = false;
+        }
         move();
+        if (attack)
+            doAttack();
 
         if(!falling)
         {
@@ -76,11 +98,8 @@ class Player extends FlxSpriteGroup
         }
         animReplace('jump', 'fall');
 
-        if (attack)
-            doAttack();
-
-        addOffset(playerSprite, [25,0], [-5,0]);
-        addOffset(attackHitbox, [40,0], [-70,0], false);
+        addOffset(playerSprite, [95,40], [5,40]);
+        addOffset(attackHitbox, [125,0], [-50,0], false);
 
         super.update(elapsed);
     }
@@ -97,6 +116,9 @@ class Player extends FlxSpriteGroup
     {
         if (left || right)
         {
+            if (!falling && playerSprite.animation.curAnim.name != 'attack')
+                playAnim('walk');
+            
             if (left && x > worldLimits[0])
             {
                 flipX = true;
@@ -113,6 +135,12 @@ class Player extends FlxSpriteGroup
         }
         else
         {
+            if (!falling && !jumping && playerSprite.animation.curAnim != null)
+            {
+                if (playerSprite.animation.curAnim.name != 'attack')
+                    playAnim('idle');
+            }
+
             velocity.x = 0;
         }
     }
@@ -156,7 +184,10 @@ class Player extends FlxSpriteGroup
 
     public function playAnim(anim:String, forced:Bool = false)
     {
-        playerSprite.animation.play(anim, forced);
+        if (playerSprite.animation.curAnim == null)
+            playerSprite.animation.play(anim, forced);
+        else if (playerSprite.animation.curAnim.name != 'victory')
+            playerSprite.animation.play(anim, forced);
     }
     
     public function animReplace(anim1:String, anim2:String)

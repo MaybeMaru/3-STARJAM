@@ -33,4 +33,9 @@ class Paths
     {
         return pathExists('sounds/$path.ogg', SOUND);
     }
+
+    public static function text(path:String)
+    {
+        return pathExists('data/$path.txt', TEXT);
+    }
 }

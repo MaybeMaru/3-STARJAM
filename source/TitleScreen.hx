@@ -2,13 +2,12 @@ package;
 
 import flixel.text.FlxText;
 import flixel.FlxG;
-import flixel.FlxState;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 
 using StringTools;
 //haxelib run lime test html5 --port=3001
-class TitleScreen extends FlxState
+class TitleScreen extends CoffeeState
 {
     var options:Array<String> = ['play', 'credits'];
     var optionsText:Array<FlxText> = [];
@@ -18,8 +17,7 @@ class TitleScreen extends FlxState
 
     override public function create()
 	{
-		super.create();
-        //FlxG.sound.playMusic(Paths.music('Beanie'), 1, true);
+        FlxG.sound.playMusic(Paths.music('Title'), 1, true);
         #if desktop
         options.push('exit');
         #end
@@ -47,6 +45,8 @@ class TitleScreen extends FlxState
         }
 
         changeOption();
+
+        super.create();
     }
 
     override public function update(elapsed:Float)
@@ -55,27 +55,31 @@ class TitleScreen extends FlxState
         var down:Bool = FlxG.keys.anyJustPressed(['DOWN', 'S']);
         var click:Bool = FlxG.keys.anyJustPressed(['ENTER', 'SPACE']);
 
-        if(up)
-            changeOption(-1);
-        if (down)
-            changeOption(1);
-        if(click)
-            selectOption(curOption);
+        if(!clicked)
+        {
+            if(up)
+                changeOption(-1);
+            if (down)
+                changeOption(1);
+            if(click)
+                selectOption(curOption);
+        }
             
         super.update(elapsed);
     }
 
     function selectOption(id:Int = 1)
     {
+        clicked = true;
         Quick.sound('menuSelect');
         var piss:String = options[id-1];
         switch(piss.toLowerCase().trim())
         {
             case 'play':
-                FlxG.switchState(new PlayState());
+                switchState(new PlayState());
 
             case 'credits':
-                trace('fuck');
+                switchState(new CreditsState());
             
             case 'exit':
                 #if desktop
