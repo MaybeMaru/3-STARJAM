@@ -11,6 +11,8 @@ class CreditsState extends CoffeeState
     var creditLines:Array<FlxText> = [];
     var ngLogo:FlxSprite;
 
+    var skipped:Bool = false;
+
     override public function create()
 	{
         FlxG.sound.playMusic(Paths.music('Credits'), 1, false);
@@ -38,6 +40,12 @@ class CreditsState extends CoffeeState
     override public function update(elapsed:Float)
     {
         super.update(elapsed);
+
+        if (FlxG.keys.anyJustPressed(['SPACE', 'ENTER']) && !skipped)
+        {
+            skipped = true;
+            switchState(new TitleScreen());
+        }
 
         for(line in creditLines)
         {

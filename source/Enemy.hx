@@ -22,7 +22,7 @@ class Enemy extends FlxSprite
         switch(type.toLowerCase().trim())
         {
             case 'air':
-                this.y -= 200;
+                this.y -= 150;
                 loadGraphic(Paths.sprite('beanEnemyAIR'), true, 122,87);
                 animation.add('fly', [0, 1, 2], 12);
                 animation.play('fly');
@@ -42,6 +42,7 @@ class Enemy extends FlxSprite
         if (canBeHit)
         {
             enemyHealth--;
+            Quick.sound('minigame1/enemy_hurt', 0.5);
             if(enemyHealth > 0)
             {
                 color = FlxColor.RED;

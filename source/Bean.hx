@@ -34,6 +34,7 @@ class Bean extends FlxSprite
             if(finished)
             {
                 count++;
+                Mission.beanCount++;
                 Quick.sound('minigame1/pickup_'+FlxG.random.int(1,3), 0.5);
                 visible = false;
                 kill();

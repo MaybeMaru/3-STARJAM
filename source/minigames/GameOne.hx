@@ -1,4 +1,4 @@
-package;
+package minigames;
 
 import flixel.FlxG;
 import flixel.util.FlxTimer;
@@ -10,7 +10,7 @@ import flixel.math.FlxPoint;
 
 import flixel.FlxSprite;
 
-class PlayState extends CoffeeState
+class GameOne extends CoffeeState
 {
 	private var UI:Mission;
 
@@ -55,6 +55,7 @@ class PlayState extends CoffeeState
 
 		//MAKE UI
 		Bean.count = 0;
+		Mission.resetVars();
 		Mission.setupMissions();
 		UI = new Mission();
 		add(UI);
@@ -86,11 +87,17 @@ class PlayState extends CoffeeState
 
 		gradient1.offset.y = knight.y/4;
 
+		#if debug
 		if (knight.resetP)
-		{
 			FlxG.resetState();
-		}
 
+		if (FlxG.keys.anyJustPressed(['TWO']))
+			switchState(new minigames.GameTwo());
+
+		if (FlxG.keys.anyJustPressed(['THREE']))
+			switchState(new minigames.GameThree());
+		#end
+		
 		for (enemy in enemyGroup)
 		{
 			if (FlxG.overlap(enemy, knight.attackHitbox) && knight.attack)
@@ -108,6 +115,7 @@ class PlayState extends CoffeeState
 				enemyGroup.remove(enemy);
 			}
 		}
+		Mission.showVar = Mission.beanCount;
 	}
 	
 	private function beanExplosion():Void
@@ -131,12 +139,13 @@ class PlayState extends CoffeeState
 	function endStage():Void
 	{
 		knight.canMove = false;
+		//Mission.beanCount = Bean.count;
 		if(Bean.count >= 200)
 			knight.playAnim('victory', true);
 
 		new FlxTimer().start(2, function(tmr:FlxTimer)
 		{
-			switchState(new TitleScreen());
+			switchState(new GameTwo());
 		});
 	}
 }

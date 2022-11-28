@@ -71,12 +71,12 @@ class TitleScreen extends CoffeeState
     function selectOption(id:Int = 1)
     {
         clicked = true;
-        Quick.sound('menuSelect');
+        Quick.sound('menuSelect', 2);
         var piss:String = options[id-1];
         switch(piss.toLowerCase().trim())
         {
             case 'play':
-                switchState(new PlayState());
+                switchState(new minigames.GameOne());
 
             case 'credits':
                 switchState(new CreditsState());
@@ -91,7 +91,7 @@ class TitleScreen extends CoffeeState
     function changeOption(change:Int = 0)
     {
         if (change != 0)
-            Quick.sound('menuClick');
+            Quick.sound('menuClick', 2);
 
         curOption += change;
 

@@ -1,4 +1,4 @@
-BEAN-BAGGER
+BEANBAGGER
 
 PROGRAMMING
 Maru
@@ -12,7 +12,7 @@ sfxr.me
 
 MUSIC
 Title - Halo
-Minigame 1 - M&L BIS
+Minigames - M&L BIS
 Credits - SimCity (SNES)
 
 Made for the 1st Newgrounds

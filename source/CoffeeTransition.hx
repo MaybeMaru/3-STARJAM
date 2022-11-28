@@ -32,7 +32,8 @@ class CoffeeTransition extends FlxSpriteGroup
 
     public function startTrans()
     {
-        FlxG.sound.music.fadeOut(transTime, 0);
+        if (FlxG.sound.music != null)
+            FlxG.sound.music.fadeOut(transTime, 0);
 
         fallCoffee.y = -580;
         fillCoffee.y = 520;
@@ -42,7 +43,8 @@ class CoffeeTransition extends FlxSpriteGroup
 
     public function endTrans()
     {
-        FlxG.sound.music.fadeIn(transTime, 0, 1);
+        if (FlxG.sound.music != null)
+            FlxG.sound.music.fadeIn(transTime, 0, 1);
         fallCoffee.y = -580;
         fillCoffee.y = -80;
         FlxTween.tween(fillCoffee, {y: 520}, transTime, {ease: FlxEase.quadInOut});

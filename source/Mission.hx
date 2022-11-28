@@ -16,33 +16,44 @@ typedef MissionType =
 {
     title:String,
     description:String,
+    time:Int,
+    icon:String,
 }
 
 class Mission extends FlxSpriteGroup
 {
     public static var missionMap:Map<Int, MissionType> = new Map<Int, MissionType>();
     public static var curMission:MissionType;
+    public static var showVar:Int = 0;
+
+    public static var beanCount:Int = 0;
+    public static var coffeeCount:Int = 0;
+    public static var cupsCount:Int = 0;
 
     public var missionStuff:Array<FlxText> = [];
     public var endMissionCallback:Void->Void;
 
     public var timeTxt:FlxText;
-    public var timeSpr:FlxSprite;
     public var timeLeft:Int = 60;
-
     public var beanCounterTxt:FlxText;
-    public var beanCounterSpr:Bean;
+
+    public var timeSpr:UIelement;
+    public var counterSpr:UIelement;
+
+    public static function resetVars()
+    {
+        beanCount = 0;
+        coffeeCount = 0;
+        cupsCount = 0;
+    }
 
     public function addMissionUI()
     {
-        beanCounterSpr = new Bean(440,20);
-        add(beanCounterSpr);
+        counterSpr = new UIelement(curMission.icon);
+        add(counterSpr);
 
-        timeSpr = new FlxSprite(beanCounterSpr.x, beanCounterSpr.y + 17*3).loadGraphic(Paths.sprite('clock'), true, 16,16);
-        timeSpr.scale.set(3,3);
-        timeSpr.updateHitbox();
-        timeSpr.animation.add('idle', [0,1,2,3,4], 12);
-        timeSpr.animation.play('idle');
+        timeSpr = new UIelement('clock');
+        timeSpr.y += 17*3;
         add(timeSpr);
 
         timeTxt = new FlxText(timeSpr.x + 17*3, timeSpr.y, 0, 'coolswag', 32);
@@ -50,7 +61,7 @@ class Mission extends FlxSpriteGroup
         timeTxt.borderSize = 5;
         add(timeTxt);
 
-        beanCounterTxt = new FlxText(beanCounterSpr.x + 17*3, beanCounterSpr.y, 0, ': 0', 32);
+        beanCounterTxt = new FlxText(counterSpr.x + 17*3, counterSpr.y, 0, ': 0', 32);
         beanCounterTxt.setFormat(null, 32, FlxColor.BROWN, LEFT, OUTLINE, FlxColor.BLACK);
         beanCounterTxt.borderSize = 5;
         add(beanCounterTxt);
@@ -60,6 +71,8 @@ class Mission extends FlxSpriteGroup
     {
         missionStuff = [];
         curMission = missionMap[mission];
+
+        timeLeft = curMission.time;
 
         var missionTitle:FlxText = new FlxText(525, 25, 0, curMission.title, 32);
         missionTitle.setFormat(null, 32, FlxColor.BROWN, LEFT, OUTLINE, FlxColor.BLACK);
@@ -83,16 +96,17 @@ class Mission extends FlxSpriteGroup
         addMissionUI();
     }
 
-    public static function addMission(index:Int, leTitle:String, leDescription:String)
+    public static function addMission(index:Int, leTitle:String, leDescription:String, leTime:Int, leIcon:String)
     {
-        missionMap.set(index, {title: leTitle, description: leDescription});
+        trace(index+'/'+leTitle+'/'+leDescription+'/'+leTime);
+        missionMap.set(index, {title: leTitle, description: leDescription, time: leTime, icon: leIcon});
     }
 
     public static function setupMissions()
     {
-        addMission(1, 'RIP AND BEAN', 'Destroy ENEMIES and obtain as many\nCOFFEE BEANS as possible!');
-        addMission(2, 'COFFEE PUNCHER', 'Punch all the COFFEE BEANS into COFFEE!');
-        addMission(3, 'DRINK! DRINK!', 'Quickly, DRINK all your COFFEE CUPS!!');
+        addMission(1, 'RIP AND BEAN', 'Destroy ENEMIES and obtain as many\nCOFFEE BEANS as possible!', 60, 'bean');
+        addMission(2, 'COFFEE PUNCHER', 'Punch all the COFFEE BEANS into COFFEE!', 40, 'coffee');
+        addMission(3, 'DRINK! DRINK!', 'Quickly, TYPE the correct WORDS and\nDRINK all your COFFEE CUPS!!', 30, 'cup');
     }
 
     var leCount:Float = 0;
@@ -114,6 +128,6 @@ class Mission extends FlxSpriteGroup
     function updateUI()
     {
         timeTxt.text = ': '+FlxStringUtil.formatTime(timeLeft, false);
-        beanCounterTxt.text = ': '+Bean.count;
+        beanCounterTxt.text = ': '+showVar;
     }
 }
